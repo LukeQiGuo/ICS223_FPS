@@ -5,7 +5,16 @@ using UnityEngine;
 public class FPSInput : MonoBehaviour
 {
     private float speed = 9.0f;
-    
+
+    private float gravity = -9.8f;
+
+  
+    private CharacterController charController;
+
+    void Start()
+    {
+        charController = GetComponent<CharacterController>();
+    }
 
     // Update is called once per frame
     void Update()
@@ -13,8 +22,20 @@ public class FPSInput : MonoBehaviour
         float horizInput = Input.GetAxis("Horizontal");
         float vertInput =Input.GetAxis("Vertical");
 
-        Vector3 movement = new Vector3(horizInput, 0, vertInput) * Time.deltaTime * speed ;
-        transform.Translate(movement);
-        
+        Vector3 movement = new Vector3(horizInput, 0, vertInput);
+
+        movement = Vector3.ClampMagnitude(movement, 1.0f);
+
+        movement.y = gravity;
+
+        movement *= speed;
+
+        movement *= Time.deltaTime;
+
+        movement = transform.TransformDirection (movement);
+
+        charController.Move(movement);
     }
+
+
 }
