@@ -7,16 +7,34 @@ using Microsoft.Unity.VisualStudio.Editor;
 
 public class UIController : MonoBehaviour
 {
-    private int score = 0;
+    // private int score = 0;
     [SerializeField] private TextMeshProUGUI scoreValue;
     [SerializeField] private UnityEngine.UI.Image healthBar;
     [SerializeField] private UnityEngine.UI.Image crossHair;
     [SerializeField] private OptionsPopup optionsPopup;
     [SerializeField] private SettingsPopup settingsPopup;
-    // Start is called before the first frame update
+    private int popupsActive = 0;
+
+
+    void Awake()
+    {
+        Messenger<float>.AddListener(GameEvent.HEALTH_CHANGED, OnHealthChanged);
+        Messenger.AddListener(GameEvent.POPUP_OPENED, OnPopupOpened);
+        Messenger.AddListener(GameEvent.POPUP_CLOSED, OnPopupClosed);
+    }
+
+    void OnDestroy()
+    {
+        Messenger<float>.RemoveListener(GameEvent.HEALTH_CHANGED, OnHealthChanged);
+        Messenger.RemoveListener(GameEvent.POPUP_OPENED, OnPopupOpened);
+        Messenger.RemoveListener(GameEvent.POPUP_CLOSED, OnPopupClosed);
+
+    }
+
+
     void Start()
     {
-        UpdateScore(score);
+        // UpdateScore(score);
         healthBar.fillAmount = 1;
         healthBar.color = Color.green;
         SetGameActive(true);
@@ -44,6 +62,35 @@ public class UIController : MonoBehaviour
             }
         }
     }
+    private void OnPopupOpened()
+    {
+        if (popupsActive == 0)
+        {
+            SetGameActive(false);
+        }
+        popupsActive++;
+    }
+
+    private void OnPopupClosed()
+    {
+        popupsActive--;
+        if (popupsActive == 0)
+        {
+            SetGameActive(true);
+        }
+    }
+
+
+    public void OnHealthChanged(float healthPercentage)
+    {
+        UpdateHealth(healthPercentage);
+    }
+
+    public void UpdateHealth(float healthPercentage)
+    {
+        healthBar.fillAmount = healthPercentage;
+        healthBar.color = Color.Lerp(Color.red, Color.green, healthPercentage);
+    }
 
     public void UpdateScore(int newScore)
     {
@@ -58,6 +105,7 @@ public class UIController : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             crossHair.gameObject.SetActive(true);
+            Messenger.Broadcast(GameEvent.GAME_ACTIVE);
         }
         else
         {
@@ -65,6 +113,7 @@ public class UIController : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             crossHair.gameObject.SetActive(false);
+            Messenger.Broadcast(GameEvent.GAME_INACTIVE);
         }
     }
 }

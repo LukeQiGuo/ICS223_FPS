@@ -13,8 +13,12 @@ public class WanderingAI : MonoBehaviour
     private float fireRate = 2.0f;
     private float nextFire = 0.0f;
     private float enemySpeed = 1.5f;
+    private float baseSpeed = 0.25f;
+    private float difficultySpeedDelta = 0.3f;
     private float obstacleRange = 5.0f;
     private float sphereRadius = 0.75f;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -65,5 +69,10 @@ public class WanderingAI : MonoBehaviour
         Vector3 rangeTest = transform.position + transform.forward * obstacleRange;
         Debug.DrawLine(transform.position, rangeTest);
         Gizmos.DrawWireSphere(rangeTest, sphereRadius);
+    }
+    public void SetDifficulty(int difficulty)
+    {
+        Debug.Log("WanderingAI.SetDifficulty(" + difficulty + ")");
+        enemySpeed = baseSpeed + (difficulty * difficultySpeedDelta);
     }
 }

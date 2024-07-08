@@ -2522,7 +2522,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62fcd844ea65442ff8fca3f2ab86b2f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiController: {fileID: 348477755}
   settingsPopup: {fileID: 1950670865}
 --- !u!43 &402600593
 Mesh:
@@ -5982,6 +5981,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f4ed6eae2aee4ceda550c6de77cdff8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ui: {fileID: 348477755}
   enemyPrefab: {fileID: 5342288996037441540, guid: b5589e7d6e52d4ce69e6d23f3f71e4fa, type: 3}
   iguanaPrefab: {fileID: 141256, guid: b4806bcfd71324778b360c0299195b34, type: 3}
   iguanaSpawnPt: {fileID: 1541494431}
@@ -14730,6 +14730,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b79c3bf178928458cb1972f4fd77ae9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 5
 --- !u!1 &2016303139
 GameObject:
   m_ObjectHideFlags: 0

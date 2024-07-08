@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 public class ReactiveTarget : MonoBehaviour
 {
+   private bool isAlive = true;
    public void ReactToHit()
    {
+      if (!isAlive) return;
+      isAlive = false;
 
       Animator enemyAnimator = GetComponent<Animator>();
       if (enemyAnimator != null)
@@ -17,6 +20,9 @@ public class ReactiveTarget : MonoBehaviour
       {
          enemyAI.ChangeState(EnemyStates.dead);
       }
+
+      Messenger.Broadcast(GameEvent.ENEMY_DEAD);
+
       // StartCoroutine(Die());
    }
 

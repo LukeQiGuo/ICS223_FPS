@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MouseLook : MonoBehaviour
+public class MouseLook : ActiveDuringGameplay
 {
 
-    public enum RotationAxes{
+    public enum RotationAxes
+    {
         MonseXAndY,
         MouseX,
         MouseY
@@ -18,29 +19,32 @@ public class MouseLook : MonoBehaviour
     public float minVert = -45.0f;
     public float maxVert = 45.0f;
     public float rotationX = 0.0f;
-   
+
     // Update is called once per frame
     void Update()
     {
-        if(axes == RotationAxes.MouseX){
+        if (axes == RotationAxes.MouseX)
+        {
             float deltHoriz = Input.GetAxis("Mouse X") * sensitiveHoriz;
             transform.Rotate(Vector3.up * deltHoriz);
 
         }
-         else if(axes == RotationAxes.MouseY){
+        else if (axes == RotationAxes.MouseY)
+        {
             rotationX -= Input.GetAxis("Mouse Y") * sensitiveVert;
-            rotationX = Mathf.Clamp (rotationX, minVert, maxVert);
+            rotationX = Mathf.Clamp(rotationX, minVert, maxVert);
 
-            transform.localEulerAngles = new Vector3 (rotationX, 0, 0);
+            transform.localEulerAngles = new Vector3(rotationX, 0, 0);
         }
-         else{
+        else
+        {
             float deltaHor = Input.GetAxis("Mouse X") * sensitiveHoriz;
             rotationX -= Input.GetAxis("Mouse Y") * sensitiveVert;
-            rotationX = Mathf.Clamp (rotationX, minVert, maxVert);
+            rotationX = Mathf.Clamp(rotationX, minVert, maxVert);
             float rotationY = transform.localEulerAngles.y + deltaHor;
 
             transform.localEulerAngles = new Vector3(rotationX, rotationY, 0);
         }
-        
+
     }
 }

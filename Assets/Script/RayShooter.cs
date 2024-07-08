@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RayShooter : MonoBehaviour
+public class RayShooter : ActiveDuringGameplay
 {
     private Camera cam;
-    [SerializeField]
+    // [SerializeField]
     // private int aimSize = 16;
     // Start is called before the first frame update
     void Start()
