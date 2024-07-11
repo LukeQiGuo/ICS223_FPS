@@ -14,13 +14,16 @@ public class UIController : MonoBehaviour
     [SerializeField] private OptionsPopup optionsPopup;
     [SerializeField] private SettingsPopup settingsPopup;
     private int popupsActive = 0;
-
+    private bool isGameActive = false;
 
     void Awake()
     {
         Messenger<float>.AddListener(GameEvent.HEALTH_CHANGED, OnHealthChanged);
         Messenger.AddListener(GameEvent.POPUP_OPENED, OnPopupOpened);
         Messenger.AddListener(GameEvent.POPUP_CLOSED, OnPopupClosed);
+        Messenger.AddListener(GameEvent.GAME_ACTIVE, OnGameActive);
+        Messenger.AddListener(GameEvent.GAME_INACTIVE, OnGameInactive);
+
     }
 
     void OnDestroy()
@@ -28,6 +31,9 @@ public class UIController : MonoBehaviour
         Messenger<float>.RemoveListener(GameEvent.HEALTH_CHANGED, OnHealthChanged);
         Messenger.RemoveListener(GameEvent.POPUP_OPENED, OnPopupOpened);
         Messenger.RemoveListener(GameEvent.POPUP_CLOSED, OnPopupClosed);
+        Messenger.RemoveListener(GameEvent.GAME_ACTIVE, OnGameActive);
+        Messenger.RemoveListener(GameEvent.GAME_INACTIVE, OnGameInactive);
+
 
     }
 
@@ -80,6 +86,15 @@ public class UIController : MonoBehaviour
         }
     }
 
+    private void OnGameActive()
+    {
+        SetGameActive(true);
+    }
+
+    private void OnGameInactive()
+    {
+        SetGameActive(false);
+    }
 
     public void OnHealthChanged(float healthPercentage)
     {
@@ -99,6 +114,8 @@ public class UIController : MonoBehaviour
 
     public void SetGameActive(bool active)
     {
+        if (isGameActive == active) return;
+        isGameActive = active;
         if (active)
         {
             Time.timeScale = 1;

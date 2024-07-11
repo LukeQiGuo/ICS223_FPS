@@ -27,6 +27,8 @@ public class OptionsPopup : BasePopup
         Debug.Log("return to game");
         Close();
         Messenger.Broadcast(GameEvent.POPUP_CLOSED);
+        Messenger.Broadcast(GameEvent.GAME_ACTIVE);
+
     }
 
 
