@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Microsoft.Unity.VisualStudio.Editor;
+
 
 public class UIController : MonoBehaviour
 {
@@ -13,6 +13,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Image crossHair;
     [SerializeField] private OptionsPopup optionsPopup;
     [SerializeField] private SettingsPopup settingsPopup;
+    [SerializeField] private GameOverPopup gameOverPopup;
     private int popupsActive = 0;
     private bool isGameActive = false;
 
@@ -132,5 +133,11 @@ public class UIController : MonoBehaviour
             crossHair.gameObject.SetActive(false);
             Messenger.Broadcast(GameEvent.GAME_INACTIVE);
         }
+
+
+    }
+    public void ShowGameOverPopup()
+    {
+        gameOverPopup.Open();
     }
 }

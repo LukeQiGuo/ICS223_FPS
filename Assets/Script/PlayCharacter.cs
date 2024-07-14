@@ -6,6 +6,18 @@ public class PlayCharacter : MonoBehaviour
 {
     public float maxHealth = 5f;
     private float health;
+
+    private void Awake()
+    {
+        Messenger<int>.AddListener(GameEvent.PICKUP_HEALTH, OnPickupHealth);
+    }
+
+    private void OnDestroy()
+    {
+        Messenger<int>.RemoveListener(GameEvent.PICKUP_HEALTH, OnPickupHealth);
+    }
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,8 +34,19 @@ public class PlayCharacter : MonoBehaviour
 
         if (health <= 0)
         {
-            Debug.Break();
+            Messenger.Broadcast(GameEvent.PLAYER_DEAD);
         }
+    }
+
+    public void OnPickupHealth(int healthAdded)
+    {
+        health += healthAdded;
+        if (health > maxHealth)
+        {
+            health = maxHealth;
+        }
+        float healthPercent = (float)health / maxHealth;
+        Messenger<float>.Broadcast(GameEvent.HEALTH_CHANGED, healthPercent);
     }
 
 }
