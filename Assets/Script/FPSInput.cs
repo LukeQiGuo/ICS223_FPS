@@ -5,29 +5,49 @@ using UnityEngine;
 public class FPSInput : MonoBehaviour
 {
     private float normalSpeed = 9.0f;
-    private float runSpeed = 18.0f; // 奔跑速度
+    private float runSpeed = 18.0f;
     private float gravity = -9.8f;
-    private float jumpHeight = 1.0f; // 跳跃高度
-    private float crouchHeight = 1.0f; // 下蹲时的高度
-    private float standHeight = 2.0f; // 站立时的高度
-    private float crouchSpeed = 4.5f; // 下蹲时的移动速度
-    private Camera playerCamera;
+    private float jumpHeight = 1.0f;
+    private float crouchHeight = 1.0f;
+    private float standHeight = 2.0f;
+    private float crouchSpeed = 4.5f;
     private Vector3 cameraStandPosition;
     private Vector3 cameraCrouchPosition;
     private Vector3 velocity;
     private CharacterController charController;
     private bool isCrouching = false;
     private float pushForce = 5.0f;
+    private bool isJumping = false;
+    [SerializeField] private AudioClip movementClip;
+    [SerializeField] private AudioClip jumpClip;
+    [SerializeField] private AudioClip hitGroundClip;
+    private AudioSource audioSource;
+    [SerializeField] private Animator animator;
+    private float originalVolume; // 新增
 
     void Start()
     {
         charController = GetComponent<CharacterController>();
-        playerCamera = Camera.main;
-        cameraStandPosition = playerCamera.transform.localPosition;
-        cameraCrouchPosition = new Vector3(cameraStandPosition.x, cameraStandPosition.y - 0.5f, cameraStandPosition.z);
+        audioSource = GetComponent<AudioSource>();
+
+        if (audioSource != null)
+        {
+            originalVolume = audioSource.volume; // 保存原始音量
+        }
     }
 
-    // Update is called once per frame
+    void Awake()
+    {
+        Messenger.AddListener(GameEvent.MUTE_ALL_SOUNDS, OnMuteAllSounds);
+        Messenger.AddListener(GameEvent.UNMUTE_ALL_SOUNDS, OnUnmuteAllSounds); // 新增
+    }
+
+    void OnDestroy()
+    {
+        Messenger.RemoveListener(GameEvent.MUTE_ALL_SOUNDS, OnMuteAllSounds);
+        Messenger.RemoveListener(GameEvent.UNMUTE_ALL_SOUNDS, OnUnmuteAllSounds); // 新增
+    }
+
     void Update()
     {
         float horizInput = Input.GetAxis("Horizontal");
@@ -36,21 +56,24 @@ public class FPSInput : MonoBehaviour
         Vector3 movement = new Vector3(horizInput, 0, vertInput);
         movement = Vector3.ClampMagnitude(movement, 1.0f);
 
-        // 检查是否按下奔跑键 (左Shift键)
-        if (Input.GetKey(KeyCode.LeftShift))
+        bool isMoving = movement.magnitude > 0;
+
+        if (Input.GetKey(KeyCode.LeftShift) && !isCrouching && charController.isGrounded)
         {
             movement *= runSpeed;
+            audioSource.pitch = 2.0f;
         }
-        else if (isCrouching)
+        else if (isCrouching && charController.isGrounded)
         {
             movement *= crouchSpeed;
+            audioSource.pitch = 1.0f;
         }
-        else
+        else if (charController.isGrounded)
         {
             movement *= normalSpeed;
+            audioSource.pitch = 1.0f;
         }
 
-        // 检查是否按下下蹲键 (左Ctrl键)
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             Crouch();
@@ -60,38 +83,59 @@ public class FPSInput : MonoBehaviour
             StandUp();
         }
 
-
         if (charController.isGrounded)
         {
             Debug.Log("Grounded");
-            // 如果在地面上，重置y方向速度为一个小的负数
             velocity.y = -2f;
 
-            if (Input.GetButtonDown("Jump") && !isCrouching) // 检查是否按下跳跃键 (默认是 Space 键)
+            if (isJumping)
             {
-                Debug.Log("Jumping");
-                // 使用公式计算跳跃速度
+                Debug.Log("Landed, playing landing sound");
+                PlayJumpSound(hitGroundClip);
+                isJumping = false;
+            }
+
+            if (Input.GetButtonDown("Jump") && !isCrouching)
+            {
+                Debug.Log("Jumping, playing jump sound");
                 velocity.y = Mathf.Sqrt(2 * -gravity * jumpHeight);
+                isJumping = true;
+                PlayJumpSound(jumpClip);
             }
         }
         else
         {
-            // 如果不在地面上，应用重力
             velocity.y += gravity * Time.deltaTime;
         }
 
-        // 将水平运动应用到角色控制器
         Vector3 finalMovement = transform.TransformDirection(movement) * Time.deltaTime;
-        // 将垂直运动应用到角色控制器
         finalMovement.y = velocity.y * Time.deltaTime;
 
         charController.Move(finalMovement);
+
+        animator.SetFloat("moveSpeed", finalMovement.magnitude / Time.deltaTime);
+
+        if (isMoving && charController.isGrounded && !isJumping)
+        {
+            if (!audioSource.isPlaying || audioSource.clip != movementClip)
+            {
+                PlayMovementSound(movementClip);
+                Debug.Log("Playing movement sound");
+            }
+        }
+        else if (!isMoving && charController.isGrounded && !isJumping)
+        {
+            if (audioSource.isPlaying && audioSource.clip == movementClip)
+            {
+                audioSource.Stop();
+                Debug.Log("Stopping movement sound");
+            }
+        }
     }
 
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
         Rigidbody body = hit.collider.attachedRigidbody;
-        // does it have a rigidbody and is Physics enabled?
         if (body != null && !body.isKinematic)
         {
             body.velocity = hit.moveDirection * pushForce;
@@ -101,14 +145,41 @@ public class FPSInput : MonoBehaviour
     private void Crouch()
     {
         charController.height = crouchHeight;
-        playerCamera.transform.localPosition = cameraCrouchPosition;
         isCrouching = true;
     }
 
     private void StandUp()
     {
         charController.height = standHeight;
-        playerCamera.transform.localPosition = cameraStandPosition;
         isCrouching = false;
+    }
+
+    private void PlayMovementSound(AudioClip clip)
+    {
+        audioSource.clip = clip;
+        audioSource.loop = true;
+        audioSource.Play();
+    }
+
+    private void PlayJumpSound(AudioClip clip)
+    {
+        Debug.Log("Playing jump sound: " + clip.name);
+        audioSource.PlayOneShot(clip);
+    }
+
+    private void OnMuteAllSounds()
+    {
+        if (audioSource != null)
+        {
+            audioSource.volume = 0; // 将音量设置为0
+        }
+    }
+
+    private void OnUnmuteAllSounds()
+    {
+        if (audioSource != null)
+        {
+            audioSource.volume = originalVolume; // 恢复原始音量
+        }
     }
 }
