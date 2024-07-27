@@ -23,6 +23,11 @@ public class WanderingAI : MonoBehaviour
     [SerializeField] private float chaseRange = 10.0f; // 追逐范围
     [SerializeField] private float chaseSpeed = 2.5f; // 追逐速度
 
+    [SerializeField] private float meleeAttackRange = 1.5f; // 近战攻击范围
+    [SerializeField] private float meleeAttackCooldown = 5.0f; // 近战攻击冷却时间
+    private float lastMeleeAttackTime = 0.0f; // 上次近战攻击时间
+    private Animator animator; // 新增：动画控制器
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +35,8 @@ public class WanderingAI : MonoBehaviour
         navMeshAgent = GetComponent<NavMeshAgent>();
         navMeshAgent.speed = baseSpeed;
         playerTransform = GameObject.FindWithTag("Player").transform;
+
+        animator = GetComponent<Animator>(); // 获取动画控制器
     }
 
     // Update is called once per frame
@@ -44,7 +51,19 @@ public class WanderingAI : MonoBehaviour
                 // 追逐玩家
                 navMeshAgent.speed = chaseSpeed;
                 navMeshAgent.SetDestination(playerTransform.position);
-                ShootAtPlayer();
+
+                if (distanceToPlayer < meleeAttackRange)
+                {
+                    // 切换到攻击动画
+                    animator.SetBool("IsAttacking", true);
+                    PerformMeleeAttack(); // 执行近战攻击逻辑
+                }
+                else
+                {
+                    // 切换回行走动画
+                    animator.SetBool("IsAttacking", false);
+                    ShootAtPlayer();
+                }
             }
 
             else
@@ -78,6 +97,27 @@ public class WanderingAI : MonoBehaviour
 
         }
     }
+
+    private void PerformMeleeAttack()
+    {
+        if (Time.time >= lastMeleeAttackTime + meleeAttackCooldown)
+        {
+            lastMeleeAttackTime = Time.time;
+            OnAttackHit(); // 每次攻击时调用
+        }
+    }
+
+    private void OnAttackHit()
+    {
+        if (Vector3.Distance(transform.position, playerTransform.position) < meleeAttackRange)
+        {
+            PlayCharacter player = playerTransform.GetComponent<PlayCharacter>();
+            if (player != null)
+            {
+                player.Hit(); // 对玩家造成伤害
+            }
+        }
+    }
     private void ShootAtPlayer()
     {
         if (laserbeam == null && Time.time > nextFire)
@@ -93,10 +133,16 @@ public class WanderingAI : MonoBehaviour
         this.state = state;
         if (state == EnemyStates.dead)
         {
+            animator.SetBool("IsAttacking", false); // 停止攻击动画
             GetComponent<NavMeshAgent>().enabled = false;
         }
 
     }
+
+
+
+
+
 
     private void OnDrawGizmosSelected()
     {
