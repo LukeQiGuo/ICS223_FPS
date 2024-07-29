@@ -9,9 +9,9 @@ public class RayShooter : MonoBehaviour
     [SerializeField] private AudioClip shootClip;
     [SerializeField] private AudioClip reloadClip;
 
-    private int currentAmmo = 6;
-    private int maxAmmo = 6;
-    private int totalClips = 3;
+    private int currentAmmo = 10;
+    private int maxAmmo = 10;
+    private int totalClips = 6;
 
     private bool isGameActive = true;
     [SerializeField] private Animator animator;
@@ -35,7 +35,7 @@ public class RayShooter : MonoBehaviour
         Messenger.AddListener(GameEvent.GAME_ACTIVE, OnGameActive);
         Messenger.AddListener(GameEvent.GAME_INACTIVE, OnGameInactive);
         Messenger.AddListener(GameEvent.MUTE_ALL_SOUNDS, OnMuteAllSounds);
-        Messenger.AddListener(GameEvent.UNMUTE_ALL_SOUNDS, OnUnmuteAllSounds); // 新增
+        Messenger.AddListener(GameEvent.UNMUTE_ALL_SOUNDS, OnUnmuteAllSounds);
     }
 
     void OnDestroy()
@@ -43,7 +43,7 @@ public class RayShooter : MonoBehaviour
         Messenger.RemoveListener(GameEvent.GAME_ACTIVE, OnGameActive);
         Messenger.RemoveListener(GameEvent.GAME_INACTIVE, OnGameInactive);
         Messenger.RemoveListener(GameEvent.MUTE_ALL_SOUNDS, OnMuteAllSounds);
-        Messenger.RemoveListener(GameEvent.UNMUTE_ALL_SOUNDS, OnUnmuteAllSounds); // 新增
+        Messenger.RemoveListener(GameEvent.UNMUTE_ALL_SOUNDS, OnUnmuteAllSounds);
     }
 
     void LateUpdate()
@@ -64,7 +64,7 @@ public class RayShooter : MonoBehaviour
                 Debug.Log("No ammo. Press R to reload.");
             }
         }
-        else if (Input.GetKeyDown(KeyCode.R))
+        else if (Input.GetKeyDown(KeyCode.R) && !isReloading)
         {
             Reload();
         }
@@ -118,21 +118,16 @@ public class RayShooter : MonoBehaviour
             currentAmmo = maxAmmo;
             Messenger<int>.Broadcast(GameEvent.AMMO_CHANGED, currentAmmo);
             Messenger<int>.Broadcast(GameEvent.CLIPS_CHANGED, totalClips);
-            Debug.Log("Reloaded. Clips left: " + totalClips);
-
             StartCoroutine(ResetReloadAnimation());
         }
-        else
-        {
-            Debug.Log("No more clips left.");
-        }
+
     }
 
     private IEnumerator ResetReloadAnimation()
     {
-        yield return new WaitForSeconds(1f);
-        animator.SetBool("reload", false);
+        yield return new WaitForSeconds(9f);
         isReloading = false;
+        animator.SetBool("reload", false);
     }
 
     private IEnumerator CreateTempSphereIndicator(Vector3 hitPosition)
@@ -150,10 +145,7 @@ public class RayShooter : MonoBehaviour
         {
             shootingAudioSource.PlayOneShot(shootClip);
         }
-        else
-        {
-            Debug.LogWarning("Shoot clip or shooting audio source is missing.");
-        }
+
     }
 
     private void PlayReloadSound()
@@ -162,10 +154,7 @@ public class RayShooter : MonoBehaviour
         {
             shootingAudioSource.PlayOneShot(reloadClip);
         }
-        else
-        {
-            Debug.LogWarning("Reload clip or shooting audio source is missing.");
-        }
+
     }
 
     private void OnGameActive()

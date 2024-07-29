@@ -23,7 +23,7 @@ public class FPSInput : MonoBehaviour
     [SerializeField] private AudioClip hitGroundClip;
     private AudioSource audioSource;
     [SerializeField] private Animator animator;
-    private float originalVolume; // 新增
+    private float originalVolume;
 
     void Start()
     {
@@ -32,20 +32,20 @@ public class FPSInput : MonoBehaviour
 
         if (audioSource != null)
         {
-            originalVolume = audioSource.volume; // 保存原始音量
+            originalVolume = audioSource.volume;
         }
     }
 
     void Awake()
     {
         Messenger.AddListener(GameEvent.MUTE_ALL_SOUNDS, OnMuteAllSounds);
-        Messenger.AddListener(GameEvent.UNMUTE_ALL_SOUNDS, OnUnmuteAllSounds); // 新增
+        Messenger.AddListener(GameEvent.UNMUTE_ALL_SOUNDS, OnUnmuteAllSounds);
     }
 
     void OnDestroy()
     {
         Messenger.RemoveListener(GameEvent.MUTE_ALL_SOUNDS, OnMuteAllSounds);
-        Messenger.RemoveListener(GameEvent.UNMUTE_ALL_SOUNDS, OnUnmuteAllSounds); // 新增
+        Messenger.RemoveListener(GameEvent.UNMUTE_ALL_SOUNDS, OnUnmuteAllSounds);
     }
 
     void Update()
@@ -171,7 +171,7 @@ public class FPSInput : MonoBehaviour
     {
         if (audioSource != null)
         {
-            audioSource.volume = 0; // 将音量设置为0
+            audioSource.volume = 0;
         }
     }
 
@@ -179,7 +179,7 @@ public class FPSInput : MonoBehaviour
     {
         if (audioSource != null)
         {
-            audioSource.volume = originalVolume; // 恢复原始音量
+            audioSource.volume = originalVolume;
         }
     }
 }
