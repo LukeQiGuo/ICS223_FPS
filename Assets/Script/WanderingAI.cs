@@ -20,15 +20,15 @@ public class WanderingAI : MonoBehaviour
     private Transform playerTransform;
     private NavMeshAgent navMeshAgent;
 
-    [SerializeField] private float chaseRange = 10.0f; // 追逐范围
-    [SerializeField] private float chaseSpeed = 2.5f; // 追逐速度
+    [SerializeField] private float chaseRange = 10.0f;
+    [SerializeField] private float chaseSpeed = 2.5f;
 
-    [SerializeField] private float meleeAttackRange = 1.5f; // 近战攻击范围
-    [SerializeField] private float meleeAttackCooldown = 5.0f; // 近战攻击冷却时间
-    private float lastMeleeAttackTime = 0.0f; // 上次近战攻击时间
-    private Animator animator; // 新增：动画控制器
+    [SerializeField] private float meleeAttackRange = 1.5f;
+    [SerializeField] private float meleeAttackCooldown = 8.0f;
+    private float lastMeleeAttackTime = 0.0f;
+    private Animator animator;
 
-    // Start is called before the first frame update
+
     void Start()
     {
         state = EnemyStates.alive;
@@ -36,7 +36,7 @@ public class WanderingAI : MonoBehaviour
         navMeshAgent.speed = baseSpeed;
         playerTransform = GameObject.FindWithTag("Player").transform;
 
-        animator = GetComponent<Animator>(); // 获取动画控制器
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -48,19 +48,19 @@ public class WanderingAI : MonoBehaviour
 
             if (distanceToPlayer < chaseRange)
             {
-                // 追逐玩家
+
                 navMeshAgent.speed = chaseSpeed;
                 navMeshAgent.SetDestination(playerTransform.position);
 
                 if (distanceToPlayer < meleeAttackRange)
                 {
-                    // 切换到攻击动画
+
                     animator.SetBool("IsAttacking", true);
-                    PerformMeleeAttack(); // 执行近战攻击逻辑
+                    PerformMeleeAttack();
                 }
                 else
                 {
-                    // 切换回行走动画
+
                     animator.SetBool("IsAttacking", false);
                     ShootAtPlayer();
                 }
@@ -103,7 +103,7 @@ public class WanderingAI : MonoBehaviour
         if (Time.time >= lastMeleeAttackTime + meleeAttackCooldown)
         {
             lastMeleeAttackTime = Time.time;
-            OnAttackHit(); // 每次攻击时调用
+            OnAttackHit();
         }
     }
 
@@ -114,7 +114,7 @@ public class WanderingAI : MonoBehaviour
             PlayCharacter player = playerTransform.GetComponent<PlayCharacter>();
             if (player != null)
             {
-                player.Hit(); // 对玩家造成伤害
+                player.Hit();
             }
         }
     }
@@ -133,7 +133,7 @@ public class WanderingAI : MonoBehaviour
         this.state = state;
         if (state == EnemyStates.dead)
         {
-            animator.SetBool("IsAttacking", false); // 停止攻击动画
+            animator.SetBool("IsAttacking", false);
             GetComponent<NavMeshAgent>().enabled = false;
         }
 

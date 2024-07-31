@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayCharacter : MonoBehaviour
 {
-    public float maxHealth = 10f;
+    [SerializeField] private float maxHealth = 20f;
     private float health;
 
     private void Awake()

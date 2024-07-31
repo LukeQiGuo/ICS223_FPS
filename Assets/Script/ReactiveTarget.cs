@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class ReactiveTarget : MonoBehaviour
 {
-   [SerializeField] private GameObject healthPackPrefab; // 新增
+   [SerializeField] private GameObject healthPackPrefab;
    private bool isAlive = true;
    public void ReactToHit()
    {
@@ -24,25 +24,18 @@ public class ReactiveTarget : MonoBehaviour
 
       Messenger.Broadcast(GameEvent.ENEMY_DEAD);
 
-      // StartCoroutine(Die());
+
    }
 
-   // private IEnumerator Die()
-   // {
-   //    // iTween.RotateAdd(this.gameObject, new Vector3(-75, 0, 0), 1);
 
-   //    yield return new WaitForSeconds(2);
-
-   //    Destroy(this.gameObject);
-   // }
 
    private void DeadEvent()
    {
-      // 10%的概率掉落急救箱
-      if (Random.value <= 0.9f)
+
+      if (Random.value <= 0.2f)
       {
          Vector3 spawnPosition = transform.position;
-         spawnPosition.y = 1.0f; // 设置生成位置的 y 轴值为 1.0
+         spawnPosition.y = 1.0f;
          Instantiate(healthPackPrefab, spawnPosition, Quaternion.identity);
 
       }

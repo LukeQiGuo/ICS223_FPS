@@ -17,16 +17,15 @@ public class RayShooter : MonoBehaviour
     [SerializeField] private Animator animator;
     private bool isShooting = false;
     private bool isReloading = false;
-    private float originalVolume; // 新增
+    private float originalVolume;
 
     void Start()
     {
         cam = GetComponent<Camera>();
-        shootingAudioSource = GetComponent<AudioSource>(); // 获取当前游戏对象上的AudioSource组件
-
+        shootingAudioSource = GetComponent<AudioSource>();
         if (shootingAudioSource != null)
         {
-            originalVolume = shootingAudioSource.volume; // 保存原始音量
+            originalVolume = shootingAudioSource.volume;
         }
     }
 
@@ -171,7 +170,7 @@ public class RayShooter : MonoBehaviour
     {
         if (shootingAudioSource != null)
         {
-            shootingAudioSource.volume = 0; // 将音量设置为0
+            shootingAudioSource.volume = 0;
         }
     }
 
@@ -179,7 +178,7 @@ public class RayShooter : MonoBehaviour
     {
         if (shootingAudioSource != null)
         {
-            shootingAudioSource.volume = originalVolume; // 恢复原始音量
+            shootingAudioSource.volume = originalVolume;
         }
     }
 }

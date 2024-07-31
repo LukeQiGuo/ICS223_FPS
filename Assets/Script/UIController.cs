@@ -10,13 +10,13 @@ public class UIController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreValue;
     [SerializeField] private UnityEngine.UI.Image healthBar;
     [SerializeField] private UnityEngine.UI.Image crossHair;
-    [SerializeField] private TextMeshProUGUI ammoValue; // 新增
-    [SerializeField] private TextMeshProUGUI clipsValue; // 新增
+    [SerializeField] private TextMeshProUGUI ammoValue;
+    [SerializeField] private TextMeshProUGUI clipsValue;
     [SerializeField] private OptionsPopup optionsPopup;
     [SerializeField] private SettingsPopup settingsPopup;
     [SerializeField] private GameOverPopup gameOverPopup;
-    [SerializeField] private StartGamePopup startGamePopup; // 新增
-    [SerializeField] private TaskCompletedPopup taskCompletedPopup; // 新增
+    [SerializeField] private StartGamePopup startGamePopup;
+    [SerializeField] private TaskCompletedPopup taskCompletedPopup;
 
 
 
@@ -31,10 +31,10 @@ public class UIController : MonoBehaviour
         Messenger.AddListener(GameEvent.POPUP_CLOSED, OnPopupClosed);
         Messenger.AddListener(GameEvent.GAME_ACTIVE, OnGameActive);
         Messenger.AddListener(GameEvent.GAME_INACTIVE, OnGameInactive);
-        Messenger<int>.AddListener(GameEvent.AMMO_CHANGED, OnAmmoChanged); // 新增
-        Messenger<int>.AddListener(GameEvent.CLIPS_CHANGED, OnClipsChanged); // 新增
-        Messenger.AddListener(GameEvent.START_GAME, OnStartGame); // 新增
-        Messenger.AddListener(GameEvent.TASK_COMPLETED, OnTaskCompleted); // 新增
+        Messenger<int>.AddListener(GameEvent.AMMO_CHANGED, OnAmmoChanged);
+        Messenger<int>.AddListener(GameEvent.CLIPS_CHANGED, OnClipsChanged);
+        Messenger.AddListener(GameEvent.START_GAME, OnStartGame);
+        Messenger.AddListener(GameEvent.TASK_COMPLETED, OnTaskCompleted);
     }
 
     void OnDestroy()
@@ -44,10 +44,10 @@ public class UIController : MonoBehaviour
         Messenger.RemoveListener(GameEvent.POPUP_CLOSED, OnPopupClosed);
         Messenger.RemoveListener(GameEvent.GAME_ACTIVE, OnGameActive);
         Messenger.RemoveListener(GameEvent.GAME_INACTIVE, OnGameInactive);
-        Messenger<int>.RemoveListener(GameEvent.AMMO_CHANGED, OnAmmoChanged); // 新增
-        Messenger<int>.RemoveListener(GameEvent.CLIPS_CHANGED, OnClipsChanged); // 新增
-        Messenger.RemoveListener(GameEvent.START_GAME, OnStartGame); // 新增
-        Messenger.RemoveListener(GameEvent.TASK_COMPLETED, OnTaskCompleted); // 新增
+        Messenger<int>.RemoveListener(GameEvent.AMMO_CHANGED, OnAmmoChanged);
+        Messenger<int>.RemoveListener(GameEvent.CLIPS_CHANGED, OnClipsChanged);
+        Messenger.RemoveListener(GameEvent.START_GAME, OnStartGame);
+        Messenger.RemoveListener(GameEvent.TASK_COMPLETED, OnTaskCompleted);
     }
 
     void Start()
@@ -56,9 +56,9 @@ public class UIController : MonoBehaviour
         healthBar.fillAmount = 1;
         healthBar.color = Color.green;
         SetGameActive(false);
-        startGamePopup.Open(); // 显示开始游戏弹窗
-        UpdateAmmoCount(10); // 初始化弹药显示
-        UpdateClipCount(3); // 初始化弹夹显示
+        startGamePopup.Open();
+        UpdateAmmoCount(10);
+        UpdateClipCount(3);
     }
 
     // Update is called once per frame
@@ -150,27 +150,7 @@ public class UIController : MonoBehaviour
         clipsValue.text = clips.ToString();
     }
 
-    // public void SetGameActive(bool active)
-    // {
-    //     if (isGameActive == active) return;
-    //     isGameActive = active;
-    //     if (active)
-    //     {
-    //         Time.timeScale = 1;
-    //         Cursor.lockState = CursorLockMode.Locked;
-    //         Cursor.visible = false;
-    //         crossHair.gameObject.SetActive(true);
-    //         Messenger.Broadcast(GameEvent.GAME_ACTIVE);
-    //     }
-    //     else
-    //     {
-    //         Time.timeScale = 0;
-    //         Cursor.lockState = CursorLockMode.None;
-    //         Cursor.visible = true;
-    //         crossHair.gameObject.SetActive(false);
-    //         Messenger.Broadcast(GameEvent.GAME_INACTIVE);
-    //     }
-    // }
+
 
     public void SetGameActive(bool active)
     {
@@ -206,11 +186,11 @@ public class UIController : MonoBehaviour
         if (!gameOverPopup.IsActive())
         {
             gameOverPopup.Open();
-            Messenger.Broadcast(GameEvent.GAME_INACTIVE); // 新增
-            Messenger.Broadcast(GameEvent.MUTE_ALL_SOUNDS); // 新增
+            Messenger.Broadcast(GameEvent.GAME_INACTIVE);
+            Messenger.Broadcast(GameEvent.MUTE_ALL_SOUNDS);
         }
     }
-    private void OnStartGame() // 新增
+    private void OnStartGame()
     {
         SetGameActive(true);
         Messenger.Broadcast(GameEvent.UNMUTE_ALL_SOUNDS);

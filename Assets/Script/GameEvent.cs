@@ -10,12 +10,12 @@ public static class GameEvent
     public const string PICKUP_HEALTH = "PICKUP_HEALTH";
     public const string PLAYER_DEAD = "PLAYER_DEAD";
     public const string RESTART_GAME = "RESTART_GAME";
-    public const string AMMO_CHANGED = "AMMO_CHANGED"; // 新增
-    public const string CLIPS_CHANGED = "CLIPS_CHANGED"; // 新增
-    public const string MUTE_ALL_SOUNDS = "MUTE_ALL_SOUNDS"; // 新增
-    public const string UNMUTE_ALL_SOUNDS = "UNMUTE_ALL_SOUNDS"; // 新增
-    public const string START_GAME = "START_GAME"; // 新增
-    public const string TASK_COMPLETED = "TASK_COMPLETED"; // 新增
+    public const string AMMO_CHANGED = "AMMO_CHANGED";
+    public const string CLIPS_CHANGED = "CLIPS_CHANGED";
+    public const string MUTE_ALL_SOUNDS = "MUTE_ALL_SOUNDS";
+    public const string UNMUTE_ALL_SOUNDS = "UNMUTE_ALL_SOUNDS";
+    public const string START_GAME = "START_GAME";
+    public const string TASK_COMPLETED = "TASK_COMPLETED";
 
 
 

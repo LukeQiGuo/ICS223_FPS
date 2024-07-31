@@ -6,7 +6,7 @@ using TMPro;
 
 public class TimerController : MonoBehaviour
 {
-    [SerializeField] public float startTime = 300.0f; // 设置开始时间为300秒（5分钟）
+    [SerializeField] public float startTime = 300.0f;
     private float currentTime;
     private bool isTimerRunning = true;
 
@@ -45,6 +45,6 @@ public class TimerController : MonoBehaviour
     private void OnTimeUp()
     {
         Debug.Log("Time's up! Game over.");
-        Messenger.Broadcast(GameEvent.PLAYER_DEAD); // 广播游戏结束事件
+        Messenger.Broadcast(GameEvent.PLAYER_DEAD);
     }
 }
