@@ -27,7 +27,8 @@ public class WanderingAI : MonoBehaviour
     [SerializeField] private float meleeAttackCooldown = 8.0f;
     private float lastMeleeAttackTime = 0.0f;
     private Animator animator;
-
+    [SerializeField] private Transform[] waypoints; // 路径点数组
+    private int currentWaypointIndex = 0; // 当前路径点索引
 
     void Start()
     {
@@ -37,6 +38,23 @@ public class WanderingAI : MonoBehaviour
         playerTransform = GameObject.FindWithTag("Player").transform;
 
         animator = GetComponent<Animator>();
+
+
+        // 查找所有带有 "Waypoint" 标签的对象，并填充 waypoints 数组
+        GameObject[] waypointObjects = GameObject.FindGameObjectsWithTag("Waypoint");
+        waypoints = new Transform[waypointObjects.Length];
+        for (int i = 0; i < waypointObjects.Length; i++)
+        {
+            waypoints[i] = waypointObjects[i].transform;
+        }
+
+        // 随机打乱巡逻点的顺序
+        ShuffleWaypoints();
+
+        if (waypoints.Length > 0)
+        {
+            navMeshAgent.SetDestination(waypoints[currentWaypointIndex].position);
+        }
     }
 
     // Update is called once per frame
@@ -66,37 +84,53 @@ public class WanderingAI : MonoBehaviour
                 }
             }
 
+            // else
+            // {
+            //     Vector3 movement = Vector3.forward * enemySpeed * Time.deltaTime;
+            //     transform.Translate(movement);
+
+            //     Ray ray = new Ray(transform.position, transform.forward);
+            //     RaycastHit hit;
+            //     if (Physics.SphereCast(ray, sphereRadius, out hit))
+            //     {
+            //         GameObject hitObject = hit.transform.gameObject;
+            //         if (hitObject.GetComponent<PlayCharacter>())
+            //         {
+            //             ShootAtPlayer();
+            //             // if (laserbeam == null && Time.time > nextFire)
+            //             // {
+            //             //     nextFire = Time.time + fireRate;
+            //             //     laserbeam = Instantiate(laserbeamPrefab) as GameObject;
+            //             //     laserbeam.transform.position = transform.TransformPoint(0, 1.5f, 1.5f);
+            //             //     laserbeam.transform.rotation = transform.rotation;
+            //             // }
+            //         }
+            //         else if (hit.distance < obstacleRange)
+            //         {
+            //             float turnAngle = Random.Range(-110, 110);
+            //             transform.Rotate(Vector3.up * turnAngle);
+            //         }
+            //     }
+            // }
             else
             {
-                Vector3 movement = Vector3.forward * enemySpeed * Time.deltaTime;
-                transform.Translate(movement);
-
-                Ray ray = new Ray(transform.position, transform.forward);
-                RaycastHit hit;
-                if (Physics.SphereCast(ray, sphereRadius, out hit))
-                {
-                    GameObject hitObject = hit.transform.gameObject;
-                    if (hitObject.GetComponent<PlayCharacter>())
-                    {
-                        ShootAtPlayer();
-                        // if (laserbeam == null && Time.time > nextFire)
-                        // {
-                        //     nextFire = Time.time + fireRate;
-                        //     laserbeam = Instantiate(laserbeamPrefab) as GameObject;
-                        //     laserbeam.transform.position = transform.TransformPoint(0, 1.5f, 1.5f);
-                        //     laserbeam.transform.rotation = transform.rotation;
-                        // }
-                    }
-                    else if (hit.distance < obstacleRange)
-                    {
-                        float turnAngle = Random.Range(-110, 110);
-                        transform.Rotate(Vector3.up * turnAngle);
-                    }
-                }
+                Patrol();
             }
 
         }
     }
+
+    private void Patrol()
+    {
+        navMeshAgent.speed = enemySpeed;
+
+        if (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance)
+        {
+            currentWaypointIndex = (currentWaypointIndex + 17) % waypoints.Length;
+            navMeshAgent.SetDestination(waypoints[currentWaypointIndex].position);
+        }
+    }
+
 
     private void PerformMeleeAttack()
     {
@@ -140,7 +174,16 @@ public class WanderingAI : MonoBehaviour
     }
 
 
-
+    private void ShuffleWaypoints()
+    {
+        for (int i = 0; i < waypoints.Length; i++)
+        {
+            Transform temp = waypoints[i];
+            int randomIndex = Random.Range(i, waypoints.Length);
+            waypoints[i] = waypoints[randomIndex];
+            waypoints[randomIndex] = temp;
+        }
+    }
 
 
 

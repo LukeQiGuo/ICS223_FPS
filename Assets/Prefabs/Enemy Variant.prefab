@@ -137,6 +137,10 @@ MonoBehaviour:
   laserbeamPrefab: {fileID: 2261425144929282060, guid: eb5fb29df46904d2dab2e293dcb132c6, type: 3}
   chaseRange: 10
   chaseSpeed: 2.5
+  meleeAttackRange: 1.5
+  meleeAttackCooldown: 8
+  waypoints:
+  - {fileID: 0}
 --- !u!195 &-6815856482051249127
 NavMeshAgent:
   m_ObjectHideFlags: 0
