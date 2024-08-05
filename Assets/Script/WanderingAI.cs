@@ -27,8 +27,8 @@ public class WanderingAI : MonoBehaviour
     [SerializeField] private float meleeAttackCooldown = 8.0f;
     private float lastMeleeAttackTime = 0.0f;
     private Animator animator;
-    [SerializeField] private Transform[] waypoints; // 路径点数组
-    private int currentWaypointIndex = 0; // 当前路径点索引
+    [SerializeField] private Transform[] waypoints;
+    private int currentWaypointIndex = 0;
 
     void Start()
     {
@@ -40,7 +40,6 @@ public class WanderingAI : MonoBehaviour
         animator = GetComponent<Animator>();
 
 
-        // 查找所有带有 "Waypoint" 标签的对象，并填充 waypoints 数组
         GameObject[] waypointObjects = GameObject.FindGameObjectsWithTag("Waypoint");
         waypoints = new Transform[waypointObjects.Length];
         for (int i = 0; i < waypointObjects.Length; i++)
@@ -48,7 +47,7 @@ public class WanderingAI : MonoBehaviour
             waypoints[i] = waypointObjects[i].transform;
         }
 
-        // 随机打乱巡逻点的顺序
+
         ShuffleWaypoints();
 
         if (waypoints.Length > 0)
