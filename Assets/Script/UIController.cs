@@ -57,7 +57,7 @@ public class UIController : MonoBehaviour
         healthBar.color = Color.green;
         SetGameActive(false);
         startGamePopup.Open();
-        UpdateAmmoCount(10);
+        UpdateAmmoCount(6);
         UpdateClipCount(3);
     }
 
@@ -197,6 +197,7 @@ public class UIController : MonoBehaviour
     }
     private void OnTaskCompleted()
     {
+
         Debug.Log("Task Completed!");
         if (!taskCompletedPopup.IsActive())
         {

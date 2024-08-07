@@ -9,6 +9,7 @@ public class WanderingAI : MonoBehaviour
 {
     private EnemyStates state;
     [SerializeField] private GameObject laserbeamPrefab;
+
     private GameObject laserbeam;
     private float fireRate = 2.0f;
     private float nextFire = 0.0f;
@@ -30,6 +31,7 @@ public class WanderingAI : MonoBehaviour
     [SerializeField] private Transform[] waypoints;
     private int currentWaypointIndex = 0;
 
+
     void Start()
     {
         state = EnemyStates.alive;
@@ -38,6 +40,8 @@ public class WanderingAI : MonoBehaviour
         playerTransform = GameObject.FindWithTag("Player").transform;
 
         animator = GetComponent<Animator>();
+
+
 
 
         GameObject[] waypointObjects = GameObject.FindGameObjectsWithTag("Waypoint");
@@ -171,6 +175,8 @@ public class WanderingAI : MonoBehaviour
         }
 
     }
+
+
 
 
     private void ShuffleWaypoints()

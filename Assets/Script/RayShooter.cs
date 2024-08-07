@@ -9,9 +9,9 @@ public class RayShooter : MonoBehaviour
     [SerializeField] private AudioClip shootClip;
     [SerializeField] private AudioClip reloadClip;
 
-    private int currentAmmo = 10;
-    private int maxAmmo = 10;
-    private int totalClips = 6;
+    private int currentAmmo = 6;
+    private int maxAmmo = 6;
+    private int totalClips = 3;
 
     private bool isGameActive = true;
     [SerializeField] private Animator animator;
@@ -35,6 +35,7 @@ public class RayShooter : MonoBehaviour
         Messenger.AddListener(GameEvent.GAME_INACTIVE, OnGameInactive);
         Messenger.AddListener(GameEvent.MUTE_ALL_SOUNDS, OnMuteAllSounds);
         Messenger.AddListener(GameEvent.UNMUTE_ALL_SOUNDS, OnUnmuteAllSounds);
+        Messenger<int>.AddListener(GameEvent.CLIPS_CHANGED, OnClipsChanged); // 监听弹夹增加事件
     }
 
     void OnDestroy()
@@ -43,6 +44,7 @@ public class RayShooter : MonoBehaviour
         Messenger.RemoveListener(GameEvent.GAME_INACTIVE, OnGameInactive);
         Messenger.RemoveListener(GameEvent.MUTE_ALL_SOUNDS, OnMuteAllSounds);
         Messenger.RemoveListener(GameEvent.UNMUTE_ALL_SOUNDS, OnUnmuteAllSounds);
+        Messenger<int>.RemoveListener(GameEvent.CLIPS_CHANGED, OnClipsChanged); // 移除监听
     }
 
     void LateUpdate()
@@ -180,5 +182,10 @@ public class RayShooter : MonoBehaviour
         {
             shootingAudioSource.volume = originalVolume;
         }
+    }
+    private void OnClipsChanged(int clipsAdded)
+    {
+        totalClips += clipsAdded; // 增加弹夹数量
+        Messenger<int>.Broadcast(GameEvent.CLIPS_CHANGED, totalClips); // 更新UI
     }
 }

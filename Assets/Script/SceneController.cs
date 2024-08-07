@@ -8,7 +8,7 @@ public class SceneController : MonoBehaviour
 {
     [SerializeField] private UIController ui;
     private int score = 0;
-
+    private int lastClipScore = 0; // 记录上次增加弹夹时的分数
 
 
     [SerializeField]
@@ -90,6 +90,11 @@ public class SceneController : MonoBehaviour
     {
         score++;
         ui.UpdateScore(score);
+        if (score - lastClipScore >= 5)
+        {
+            lastClipScore = score;
+            Messenger<int>.Broadcast(GameEvent.CLIPS_CHANGED, 1);
+        }
     }
     private void OnDifficultyChanged(int newDifficulty)
     {
