@@ -40,7 +40,7 @@ public class WanderingAI : MonoBehaviour
         animator = GetComponent<Animator>();
 
 
-        GameObject[] waypointObjects = GameObject.FindGameObjectsWithTag("Waypoint");
+        GameObject[] waypointObjects = GameObject.FindGameObjectsWithTag("WayPoint");
         waypoints = new Transform[waypointObjects.Length];
         for (int i = 0; i < waypointObjects.Length; i++)
         {

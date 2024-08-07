@@ -19,6 +19,9 @@ public class RayShooter : MonoBehaviour
     private bool isReloading = false;
     private float originalVolume;
 
+    [SerializeField] private GameObject smokeEffectPrefab; // 添加对烟雾特效的引用
+    [SerializeField] private GameObject fireEffectPrefab; // 添加对火焰特效的引用
+
     void Start()
     {
         cam = GetComponent<Camera>();
@@ -86,6 +89,13 @@ public class RayShooter : MonoBehaviour
             {
                 target.ReactToHit();
             }
+
+            else if (hitObject.CompareTag("Barrel")) // 检查是否击中Barrels
+            {
+                Instantiate(smokeEffectPrefab, hit.point, Quaternion.identity);
+                Instantiate(fireEffectPrefab, hit.point, Quaternion.identity);
+            }
+
             else
             {
                 StartCoroutine(CreateTempSphereIndicator(hit.point));
